@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Загрузка файлов{% endblock %}
+{% block content %}
+  <main>
+    <section class="container my-5 px-4">
+      <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+      <p class="text-center my-4">
+        Загрузите файлы на Яндекс Диск и получите короткие ссылки
+      </p>
+
+      <div class="container">
+        <div class="row my-3">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            <form method="POST" action="/files" enctype="multipart/form-data">
+              <div>
+                <div>
+                  <input type="file" class="form-control form-control-lg py-2 mb-3"
+                    id="form-files" name="files" multiple>
+                  {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                      {% for message in messages %}
+                        <p><span style="color:red">{{ message }}</span></p>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                </div>
+                <input type="submit" class="btn btn-primary" value="Загрузить">
+              </div>
+            </form>
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+
+      {% if uploaded_files %}
+      <div class="container">
+        <div class="row">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Имя файла</th>
+                  <th>Короткая ссылка</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for file in uploaded_files %}
+                <tr>
+                  <td>{{ file.filename }}</td>
+                  <td><a href="{{ file.short_link }}">{{ file.short_link }}</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </section>
+  </main>
+{% endblock %}
