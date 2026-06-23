@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Короткая ссылка создаётся автоматически или предложите свой вариант{% endblock %}
+{% block content %}
+  <main>
+    <section class="container my-5 px-4">
+      <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+      <p class="text-center my-4">
+        Создайте короткую ссылку автоматически или предложите свой вариант
+      </p>
+
+      <div class="container">
+        <div class="row my-3">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            <form method="POST" action="/">
+              {{ form.hidden_tag() }}
+              <div>
+                <div>
+                  <input type="text" class="form-control form-control-lg py-2 mb-3"
+                    id="form-title" name="original_link"
+                    placeholder="Длинная ссылка">
+                  {% if form.original_link.errors %}
+                    {% for error in form.original_link.errors %}
+                      <p><span style="color:red">{{ error }}</span></p>
+                    {% endfor %}
+                  {% endif %}
+                  {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                      {% for message in messages %}
+                        <p><span style="color:red">{{ message }}</span></p>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                </div>
+                <div>
+                  <input type="text" class="form-control form-control-lg py-2 mb-3"
+                    id="form-link" name="custom_id"
+                    placeholder="Ваш вариант короткой ссылки">
+                  {% if form.custom_id.errors %}
+                    {% for error in form.custom_id.errors %}
+                      <p><span style="color:red">{{ error }}</span></p>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+
+                <input type="submit" class="btn btn-primary" value="Создать">
+              </div>
+            </form>
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+
+      {% if short_link %}
+      <div class="container">
+        <div class="row ">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            <p class="text-center">
+            <h5 class="text-center">
+              <a href="{{ request.url_root }}{{ short_link }}">{{ request.url_root }}{{ short_link }}</a>
+            </h5>
+            </p>
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </section>
+  </main>
+{% endblock %}
