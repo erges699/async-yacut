@@ -4,7 +4,7 @@
 между оригинальными URL и короткими идентификаторами.
 """
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 from flask import url_for
 from sqlalchemy import Column, DateTime, Integer, String
