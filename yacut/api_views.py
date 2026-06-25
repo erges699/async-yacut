@@ -5,18 +5,19 @@
 """
 
 from flask import jsonify, request
-from flask.wrappers import Response as FlaskResponse
+from flask.typing import ResponseReturnValue
 
 from . import app
 from .models import db, URLMap
-from .utils import get_unique_short_id, is_short_id_valid
-
-RESERVED_SHORT_IDS: set = {'files'}
-"""Множество зарезервированных коротких идентификаторов."""
+from .utils import (
+    RESERVED_SHORT_IDS,
+    get_unique_short_id,
+    is_short_id_valid,
+)
 
 
 @app.route('/api/id/', methods=['POST'])
-def api_create_id() -> FlaskResponse:
+def api_create_id() -> ResponseReturnValue:
     """Создаёт новую короткую ссылку через API.
 
     Ожидает JSON-тело запроса с полями:
@@ -74,7 +75,7 @@ def api_create_id() -> FlaskResponse:
 
 
 @app.route('/api/id/<short_id>/')
-def api_get_url(short_id: str) -> FlaskResponse:
+def api_get_url(short_id: str) -> ResponseReturnValue:
     """Возвращает оригинальный URL по короткому идентификатору.
 
     Args:

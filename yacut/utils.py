@@ -15,6 +15,12 @@ CUSTOM_ID_LENGTH: int = 6
 ALPHABET: str = ascii_letters + digits
 """Набор допустимых символов для короткого идентификатора."""
 
+RESERVED_SHORT_IDS: set = {'files'}
+"""Множество зарезервированных коротких идентификаторов."""
+
+MAX_SHORT_ID_ATTEMPTS: int = 10
+"""Максимальное количество попыток генерации уникального short_id."""
+
 
 def generate_short_id(length: int = CUSTOM_ID_LENGTH) -> str:
     """Генерирует случайную строку из букв и цифр заданной длины.
@@ -63,8 +69,16 @@ def get_unique_short_id(length: int = CUSTOM_ID_LENGTH) -> str:
 
     Returns:
         Уникальный короткий идентификатор.
+
+    Raises:
+        RuntimeError: Если не удалось сгенерировать уникальный
+            short_id за MAX_SHORT_ID_ATTEMPTS попыток.
     """
-    while True:
+    for _ in range(MAX_SHORT_ID_ATTEMPTS):
         short_id = generate_short_id(length)
         if not check_short_id_exists(short_id):
             return short_id
+    raise RuntimeError(
+        f'Не удалось сгенерировать уникальный short_id '
+        f'за {MAX_SHORT_ID_ATTEMPTS} попыток'
+    )

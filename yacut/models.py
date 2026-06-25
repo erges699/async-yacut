@@ -27,7 +27,7 @@ class URLMap(db.Model):  # type: ignore[name-defined]
     id = Column(Integer, primary_key=True)
     original = Column(String(256), nullable=False)
     short = Column(String(16), unique=True, nullable=False)
-    timestamp = Column(DateTime, default=datetime.now(timezone.utc))
+    timestamp = Column(DateTime, default=datetime.utcnow)
 
     def to_dict(self) -> dict:
         """Преобразует запись в словарь для API-ответа.

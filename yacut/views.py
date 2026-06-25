@@ -7,14 +7,10 @@
 from flask import abort, flash, redirect, render_template
 
 from . import app
-from .models import db
-from .utils import get_unique_short_id
+from .models import db, URLMap
+from .utils import RESERVED_SHORT_IDS, get_unique_short_id
 from .forms import FileUploadForm, URLMapForm
-from .models import URLMap
 from .ya_disk import upload_files_to_yadisk
-
-RESERVED_SHORT_IDS: set = {'files'}
-"""Множество зарезервированных коротких идентификаторов."""
 
 
 @app.route('/', methods=['GET', 'POST'])
