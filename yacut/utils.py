@@ -6,11 +6,15 @@
 
 from random import choices
 from string import ascii_letters, digits
+from urllib.parse import urlparse
 
 from .models import URLMap
 
 CUSTOM_ID_LENGTH: int = 6
 """Длина короткого идентификатора по умолчанию."""
+
+MAX_CUSTOM_ID_LENGTH: int = 16
+"""Максимальная длина пользовательского короткого ID."""
 
 ALPHABET: str = ascii_letters + digits
 """Набор допустимых символов для короткого идентификатора."""
@@ -82,3 +86,39 @@ def get_unique_short_id(length: int = CUSTOM_ID_LENGTH) -> str:
         f'Не удалось сгенерировать уникальный short_id '
         f'за {MAX_SHORT_ID_ATTEMPTS} попыток'
     )
+
+
+def validate_custom_id(custom_id: str) -> str | None:
+    """Проверяет корректность пользовательского короткого ID.
+
+    Проверяет длину, допустимые символы и отсутствие в списке
+    зарезервированных идентификаторов.
+
+    Args:
+        custom_id: Пользовательский короткий ID для проверки.
+
+    Returns:
+        Сообщение об ошибке, если ID некорректен, иначе None.
+    """
+    if len(custom_id) > MAX_CUSTOM_ID_LENGTH:
+        return 'Указано недопустимое имя для короткой ссылки'
+    if not is_short_id_valid(custom_id):
+        return 'Указано недопустимое имя для короткой ссылки'
+    if custom_id in RESERVED_SHORT_IDS:
+        return 'Предложенный вариант короткой ссылки уже существует.'
+    if check_short_id_exists(custom_id):
+        return 'Предложенный вариант короткой ссылки уже существует.'
+    return None
+
+
+def is_url_valid(url: str) -> bool:
+    """Проверяет, что строка является валидным URL с схемой и нетворк-локацией.
+
+    Args:
+        url: Проверяемая строка URL.
+
+    Returns:
+        True, если URL корректен, иначе False.
+    """
+    parsed = urlparse(url)
+    return all([parsed.scheme, parsed.netloc])

@@ -10,9 +10,9 @@ from flask.typing import ResponseReturnValue
 from . import app
 from .models import db, URLMap
 from .utils import (
-    RESERVED_SHORT_IDS,
     get_unique_short_id,
-    is_short_id_valid,
+    is_url_valid,
+    validate_custom_id,
 )
 
 
@@ -32,30 +32,28 @@ def api_create_id() -> ResponseReturnValue:
     if data is None:
         return jsonify({'message': 'Отсутствует тело запроса'}), 400
 
-    url = data.get('url', '').strip()
-    if not url:
+    url = data.get('url')
+    if not isinstance(url, str) or not url.strip():
         return jsonify(
             {'message': '"url" является обязательным полем!'}
         ), 400
+    url = url.strip()
 
-    custom_id = data.get('custom_id', '').strip()
-    if not custom_id:
+    if not is_url_valid(url):
+        return jsonify(
+            {'message': 'Поле "url" должно содержать корректный URL.'}
+        ), 400
+
+    custom_id = data.get('custom_id')
+    if isinstance(custom_id, str):
+        custom_id = custom_id.strip()
+    else:
         custom_id = ''
 
     if custom_id:
-        if len(custom_id) > 16 or not is_short_id_valid(custom_id):
-            return jsonify(
-                {'message': 'Указано недопустимое имя для короткой '
-                            'ссылки'}
-            ), 400
-
-        if custom_id in RESERVED_SHORT_IDS or URLMap.query.filter_by(
-            short=custom_id
-        ).first() is not None:
-            return jsonify(
-                {'message': 'Предложенный вариант короткой ссылки уже '
-                            'существует.'}
-            ), 400
+        error_message = validate_custom_id(custom_id)
+        if error_message:
+            return jsonify({'message': error_message}), 400
 
         url_map = URLMap(original=url, short=custom_id)
         db.session.add(url_map)

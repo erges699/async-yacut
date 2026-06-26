@@ -7,7 +7,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, MultipleFileField
 from wtforms import StringField
-from wtforms.validators import DataRequired, Length, Regexp
+from wtforms.validators import DataRequired, Length, Regexp, URL
 
 
 class URLMapForm(FlaskForm):
@@ -24,6 +24,9 @@ class URLMapForm(FlaskForm):
         validators=[
             DataRequired(
                 message='Обязательное поле "Длинная ссылка" не заполнено.'
+            ),
+            URL(
+                message='Поле "Длинная ссылка" должно содержать URL.'
             ),
         ],
     )
